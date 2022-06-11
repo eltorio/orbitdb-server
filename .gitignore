@@ -1,0 +1,40 @@
+.DS_Store
+node_modules
+/dist
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode/launch.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+commit.sh
+yarn.lock
+package-json.lock
+launch-serve
+launch-dist
+wrangler-serve
+commit.json
+package-lock.json
+sanity-conf.json
+auth0-conf.json
+_sensitive_datas/_sensitive_datas.tar.xz
+jwks.json
+cloudinary-conf.json
+.vscode/settings.json
+src/config/node-version.json
+src/config/places.json
+src/config/mapbox-conf.json
+src/config/cesium-conf.json
