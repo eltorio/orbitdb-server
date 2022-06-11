@@ -10,9 +10,10 @@
       "scripthost"
     ],
     "allowJs": true,
+    "allowSyntheticDefaultImports":true,
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "strict": true,
+    "strict": false,
     "noEmit": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
@@ -29,7 +30,12 @@
       "~~/*": [
         "./*"
       ]
-    }
+    },
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types",
+      "./node_modules/cesium/Source"
+    ]
   },
   "ts-node": {
     "require": [

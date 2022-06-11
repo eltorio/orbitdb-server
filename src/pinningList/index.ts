@@ -48,14 +48,18 @@ const add =
   async (address: string) => {
       if (!OrbitDB.isValidAddress(address)) {
           console.log(`Failed to pin ${address}. This is not a valid address`)
-          return
+          return {} as OrbitPinner
       }
 
       console.log(`Pinning orbitdb @ ${address}`)
       const pinner = await OrbitPinner.create(address)
-      pinners[address] = pinner
+      if (pinner.drop !== undefined)
+      {pinners[address] = pinner
 
-      return pinners[address]
+      return pinners[address]}
+      else{
+        return {} as OrbitPinner
+      }
   }
 
 const startPinning =
