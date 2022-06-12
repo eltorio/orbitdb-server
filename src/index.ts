@@ -87,12 +87,27 @@ app.get('/findprovs', (req, res) => {
       }
     })
   }
-
 })
 
+app.get('/get', (req, res) => {
+  const object = req.query.object
+  if ((object !== undefined) && (typeof object === 'string') && (object !== null)) {
+    const cid = CID.asCID(object)
+    if (cid !== null){
+      ipfsInstance.ipfsModule.then((ipfs) => {
+        ipfs.object.data(cid).then((data) => {
+          res.send(data)
+        })
+      })
+    }
+  }
+})
 app.get('/peers', (req, res) => {
   ipfsInstance.ipfsModule.then((ipfs) => {
-    ipfs.swarm.peers().then((peers: PeersResult[]) => { res.send(`Connected to ${JSON.stringify(peers)}`) })
+    ipfs.swarm.peers().then((peers: PeersResult[]) => { 
+      res.header("Content-Type",'application/json');
+      res.send(`Connected to ${JSON.stringify(peers,null,4)}`) 
+    })
       .catch((reason) => {
         res.send(`Fail to connect reason is ${reason}`)
       })
@@ -112,7 +127,7 @@ if (process.env.TLS_KEY !== undefined && process.env.TLS_CERT !== undefined && c
   const credentials = { key: TLS_KEY, cert: TLS_CERT };
   const httpsServer = https.createServer(credentials, app);
   httpsServer.listen(config.API_PORT_TLS, () => console.log(`Express is listenning on TLS port ${config.API_PORT_TLS}`))
-}else{
+} else {
   app.listen(config.API_PORT, () => console.log('Express is listenning'))
 }
 

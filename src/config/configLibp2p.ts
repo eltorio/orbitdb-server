@@ -35,7 +35,7 @@ export const serverLibp2p = (opts:Libp2pBundleOpts) => {
             listen: [
                 "/ip4/0.0.0.0/tcp/4002",
                 "/ip6/::/tcp/4001",
-                "/ip4/0.0.0.0/tcp/4003/ws",
+                "/ip4/0.0.0.0/tcp/4003/wss",
                 "/dns4/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
                 "/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
                 "/dns4/webrtc-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star",
@@ -62,7 +62,7 @@ export const serverLibp2p = (opts:Libp2pBundleOpts) => {
         ],
         pubsub: new FloodSub({
             emitSelf: false,                                  // whether the node should emit to self on publish
-            globalSignaturePolicy: "StrictSign" as SignaturePolicy // message signing policy
+            globalSignaturePolicy: "NoStrictSign" as SignaturePolicy // message signing policy
         }),
         dht: new KadDHT({
             kBucketSize: 20,
