@@ -1,5 +1,5 @@
 import * as IPFS from 'ipfs-core'
-import {serverLibp2p} from './configLibp2p.js'
+import {serverLibp2p} from './config/configLibp2p.js'
 
 const ipfs = IPFS.create({
   repo: './orbitdb/pinner',

@@ -94,6 +94,12 @@ Heroku will kill it after 30 min.
    ```sh
    npm install
    ```
+2a. For TLS
+   ```sh
+   #declare two variable each containing a single lined PEM
+   export TLS_KEY="-----BEGIN RSA PRIVATE KEY-----\nMI………………………………………=\n-----END RSA PRIVATE KEY-----\n"
+   export TLS_CERT="-----BEGIN CERTIFICATE-----\nMII…………………………………………==\n-----END CERTIFICATE-----\n"
+   ```
 3. Launch
    ```js
    npm run dev;

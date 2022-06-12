@@ -1,6 +1,7 @@
 import cors from 'cors'
 import express from 'express'
-import { config } from './config.js'
+import https from 'https'
+import { config } from './config/config.js'
 import * as pinningList from './pinningList/index.js'
 import { orbitInstance } from './pinningList/orbitInstance.js'
 import { ipfsInstance } from './ipfsInstance.js'
@@ -104,5 +105,14 @@ app.get('/start', (req, res) => {
   res.send('start pinning')
   pinningList.startPinning()
 })
-app.listen(config.API_PORT, () => console.log('Express is listenning'))
+
+if (process.env.TLS_KEY !== undefined && process.env.TLS_CERT !== undefined && config.API_PORT_TLS !== undefined) {
+  const TLS_KEY = process.env.TLS_KEY
+  const TLS_CERT = process.env.TLS_CERT
+  const credentials = { key: TLS_KEY, cert: TLS_CERT };
+  const httpsServer = https.createServer(credentials, app);
+  httpsServer.listen(config.API_PORT_TLS, () => console.log(`Express is listenning on TLS port ${config.API_PORT_TLS}`))
+}else{
+  app.listen(config.API_PORT, () => console.log('Express is listenning'))
+}
 
