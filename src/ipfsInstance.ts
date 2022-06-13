@@ -29,7 +29,8 @@ export const jsIpfsAPI = ()=>{return IPFS.create({
         `/ip4/0.0.0.0/tcp/4${WS_BASE_PORT}2`,
         `/ip4/127.0.0.1/tcp/4${WS_BASE_PORT}3/ws`,
         "/dns4/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
-        "/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star"
+        "/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
+        "/dns4/webrtc-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star"
       ]
     }
   },

@@ -71,9 +71,9 @@ app.get('/connect', (req, res) => {
 
 app.get('/findprovs', (req, res) => {
   const object = req.query.object
-  const cid = CID.asCID(object)
-  if (CID.isCID(cid)) {
-    all(ipfsInstance.ipfs.dht.findProvs(cid)).then((provider) => {
+  const cid = CID.parse(object as string)
+  if (CID.asCID(cid) !== null) {
+    all(ipfsInstance.ipfs.dht.findProvs(cid, {timeout: 10000})).then((provider) => {
       res.send(JSON.stringify(provider))
     })
   }
@@ -81,10 +81,13 @@ app.get('/findprovs', (req, res) => {
 
 app.get('/get', (req, res) => {
   const object = req.query.object
-  if ((object !== undefined) && (typeof object === 'string') && (object !== null)) {
-    all(ipfsInstance.ipfs.cat(object)).then((u8data) => {
+  const cid = CID.parse(object as string)
+  if (CID.asCID(cid) !== null) {
+    all(ipfsInstance.ipfs.cat(cid)).then((u8data) => {
       res.send(new TextDecoder().decode(uint8ArrayConcat(u8data)))
     })
+  }else{
+    res.send("not a CID")
   }
 })
 
