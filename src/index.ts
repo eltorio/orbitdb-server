@@ -104,9 +104,11 @@ app.get('/start', (req, res) => {
 
 // ipfsAPI.then((ipfsCtl) => {
 //   ipfsInstance.ipfs = ipfsCtl.api;
-jsIpfsAPI.then((ipfs) => {
+jsIpfsAPI().then((ipfs) => {
+  console.log("jsipfs created")
   ipfsInstance.ipfs = ipfs;
   if (ipfsInstance.ipfs !== null) {
+    console.log("launching Express")
     if (process.env.TLS_KEY !== undefined && process.env.TLS_CERT !== undefined && config.API_PORT_TLS !== undefined) {
       const TLS_KEY = process.env.TLS_KEY
       const TLS_CERT = process.env.TLS_CERT
@@ -120,5 +122,7 @@ jsIpfsAPI.then((ipfs) => {
   else{
     console.log("Cannot start")
   }
+}).catch((reason)=>{
+  console.log(`Fail to create jsipfs reason is: ${reason}`)
 })
 
