@@ -12,6 +12,7 @@ import type { SignaturePolicy } from '@libp2p/interfaces/pubsub'
 import { KadDHT } from '@libp2p/kad-dht'
 import { Mplex } from '@libp2p/mplex'
 import { Noise } from '@chainsafe/libp2p-noise'
+import type {Libp2pFactoryFnArgs} from 'ipfs-core/src/types'
 
 type RecursivePartial<T> = {
     [P in keyof T]?: RecursivePartial<T[P]>;
@@ -23,24 +24,16 @@ type Libp2pBundleOpts = {
         Bootstrap: any
     }
 }
-export const serverLibp2p = (opts: Libp2pBundleOpts) => {
+export const serverLibp2p = (opts: Libp2pFactoryFnArgs) => {
     // Set convenience variables to clearly showcase some of the useful things that are available
     const peerId = opts.peerId
-    const bootstrapList = opts.config.Bootstrap
-
+    const bootstrapList = opts.config?.Bootstrap !== undefined ? opts.config?.Bootstrap : []
+    const swamList = opts.config?.Addresses?.Swarm !== undefined ? opts.config?.Addresses.Swarm : []
     // Build and return our libp2p node
     const myLibp2p = createLibp2p({
         peerId: peerId,
         addresses: {
-            listen: [
-                "/ip4/0.0.0.0/tcp/4002",
-                "/ip6/::/tcp/4001",
-                "/ip4/0.0.0.0/tcp/4003/wss",
-                "/dns4/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
-                "/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
-                "/dns4/webrtc-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star",
-                '/dns4/secure-beyond-12878.herokuapp.com/tcp/443/wss/p2p-webrtc-star/',
-            ]
+            listen: [...swamList]
         },
         // Lets limit the connection managers peers and have it check peer health less frequently
         connectionManager: {
@@ -77,14 +70,7 @@ export const serverLibp2p = (opts: Libp2pBundleOpts) => {
             }),
             new Bootstrap(
                 {
-                    list: [ // A list of bootstrap peers to connect to starting up the node
-                        "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN",
-                        "/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa",
-                        "/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb",
-                        "/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt",
-                        "/ip4/104.131.131.82/tcp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ",
-                        "/ip4/104.131.131.82/udp/4001/quic/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ"
-                    ],
+                    list: [...bootstrapList],
                     interval: 2000
                 }
             )
@@ -104,7 +90,7 @@ export const serverLibp2p = (opts: Libp2pBundleOpts) => {
         node.start();
         node.connectionManager.addEventListener('peer:connect', (connection) => {
             //console.log('Connection established to:', connection.detail.remotePeer.toCID().toString())	// Emitted when a new connection has been created
-            console.log(`Connected peers ${node.connectionManager.getConnections().length} ${connection.detail.remoteAddr.toString()}`)
+            console.log(`Connected peers ${node.connectionManager.getConnections().length} ${connection.detail.remoteAddr.toString()} ${connection.detail.stat.encryption}`)
           })
         //      node.addEventListener('peer:discovery', (peerId) => {
         //     // No need to dial, autoDial is on

@@ -16,7 +16,7 @@ class Pinner {
   }
 
   static async create(address: string) {
-    const ipfs = await ipfsInstance.ipfsModule
+    const ipfs = ipfsInstance.ipfs
     console.log(`use ${(await ipfs.id()).id}`)
     //ipfs.bootstrap.list().then((vals)=>{console.log(vals)})
     //ipfs.swarm.peers().then((vals)=>{console.log(vals)})

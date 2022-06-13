@@ -4,10 +4,12 @@ import https from 'https'
 import { config } from './config/config.js'
 import * as pinningList from './pinningList/index.js'
 import { orbitInstance } from './pinningList/orbitInstance.js'
-import { ipfsInstance } from './ipfsInstance.js'
+import { ipfsInstance, ipfsAPI } from './ipfsInstance.js'
 import { Multiaddr } from '@multiformats/multiaddr'
 import type { PeersResult } from 'ipfs-core-types/swarm'
 import { CID } from 'multiformats/cid'
+import all from 'it-all'
+import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 
 const app = express()
 app.use(cors())
@@ -60,12 +62,8 @@ app.get('/connect', (req, res) => {
 
   if ((address !== undefined) && (typeof address === 'string')) {
     const mAddr = new Multiaddr(address)
-    ipfsInstance.ipfsModule.then((ipfs) => {
-      ipfs.swarm.connect(mAddr).then(() => { res.send(`Connected to ${address}`) })
-        .catch((reason) => {
-          res.send(`Fail to connect reason is ${reason}`)
-        })
-    })
+    ipfsInstance.ipfs.swarm.connect(mAddr).then(() => { res.send(`Connected to ${address}`) })
+
   } else {
     res.send('missing \'address\' parameter')
   }
@@ -73,18 +71,10 @@ app.get('/connect', (req, res) => {
 
 app.get('/findprovs', (req, res) => {
   const object = req.query.object
-
-  if ((object !== undefined) && (typeof object === 'string') && (object !== null)) {
-    ipfsInstance.ipfsModule.then((ipfs) => {
-      const cid = CID.asCID(object)
-      if (cid !== null) {
-
-        (async () => {
-          for await (const proviver of ipfs.dht.findProvs(cid)) {
-            res.send(JSON.stringify(proviver))
-          }
-        })
-      }
+  const cid = CID.asCID(object)
+  if (CID.isCID(cid)) {
+    all(ipfsInstance.ipfs.dht.findProvs(cid)).then((provider) => {
+      res.send(JSON.stringify(provider))
     })
   }
 })
@@ -92,25 +82,16 @@ app.get('/findprovs', (req, res) => {
 app.get('/get', (req, res) => {
   const object = req.query.object
   if ((object !== undefined) && (typeof object === 'string') && (object !== null)) {
-    const cid = CID.asCID(object)
-    if (cid !== null){
-      ipfsInstance.ipfsModule.then((ipfs) => {
-        ipfs.object.data(cid).then((data) => {
-          res.send(data)
-        })
-      })
-    }
+    all(ipfsInstance.ipfs.cat(object)).then((u8data) => {
+      res.send(new TextDecoder().decode(uint8ArrayConcat(u8data)))
+    })
   }
 })
+
 app.get('/peers', (req, res) => {
-  ipfsInstance.ipfsModule.then((ipfs) => {
-    ipfs.swarm.peers().then((peers: PeersResult[]) => { 
-      res.header("Content-Type",'application/json');
-      res.send(`Connected to ${JSON.stringify(peers,null,4)}`) 
-    })
-      .catch((reason) => {
-        res.send(`Fail to connect reason is ${reason}`)
-      })
+  ipfsInstance.ipfs.swarm.peers().then((peers: PeersResult[]) => {
+    res.header("Content-Type", 'application/json');
+    res.send(`Connected to ${JSON.stringify(peers, null, 4)}`)
   })
 })
 
@@ -121,13 +102,21 @@ app.get('/start', (req, res) => {
   pinningList.startPinning()
 })
 
-if (process.env.TLS_KEY !== undefined && process.env.TLS_CERT !== undefined && config.API_PORT_TLS !== undefined) {
-  const TLS_KEY = process.env.TLS_KEY
-  const TLS_CERT = process.env.TLS_CERT
-  const credentials = { key: TLS_KEY, cert: TLS_CERT };
-  const httpsServer = https.createServer(credentials, app);
-  httpsServer.listen(config.API_PORT_TLS, () => console.log(`Express is listenning on TLS port ${config.API_PORT_TLS}`))
-} else {
-  app.listen(config.API_PORT, () => console.log('Express is listenning'))
-}
+ipfsAPI.then((ipfsCtl) => {
+  ipfsInstance.ipfs = ipfsCtl.api;
+  if (ipfsInstance.ipfs !== null) {
+    if (process.env.TLS_KEY !== undefined && process.env.TLS_CERT !== undefined && config.API_PORT_TLS !== undefined) {
+      const TLS_KEY = process.env.TLS_KEY
+      const TLS_CERT = process.env.TLS_CERT
+      const credentials = { key: TLS_KEY, cert: TLS_CERT };
+      const httpsServer = https.createServer(credentials, app);
+      httpsServer.listen(config.API_PORT_TLS, () => console.log(`Express is listenning on TLS port ${config.API_PORT_TLS}`))
+    } else {
+      app.listen(config.API_PORT, () => console.log('Express is listenning'))
+    }
+  }
+  else{
+    console.log("Cannot start")
+  }
+})
 
