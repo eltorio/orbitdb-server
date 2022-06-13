@@ -14,7 +14,7 @@
     "@types/orbit-db": "github:orbitdb/orbit-db-types",
     "ipfs-core-types": "^0.11.0",
     "nodemon": "^2.0.16",
-    "npm-check-updates": "^13.1.4",
+    "npm-check-updates": "^13.1.5",
     "ts-node": "^10.8.1",
     "tsconfig-paths": "^4.0.0",
     "tsup": "^6.1.2",
