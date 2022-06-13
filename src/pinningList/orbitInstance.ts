@@ -18,7 +18,6 @@ const createDbInstance = () => {
             orbitDbInstance = db;
             resolve(orbitDbInstance)
           })
-
     } else {
       resolve(orbitDbInstance)
     }

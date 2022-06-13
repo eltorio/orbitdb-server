@@ -13,6 +13,14 @@ export const ipfsInstance = {
   ipfs: {} as IPFS.IPFS,
 }
 
+export const jsIpfsAPI = IPFS.create({
+  repo: './orbitdb/server',
+  start: true,
+  EXPERIMENTAL: {
+    ipnsPubsub: true
+  },
+})
+
 export const ipfsAPI = Ctl.createFactory(
   {
     type: 'js',
@@ -24,23 +32,6 @@ export const ipfsAPI = Ctl.createFactory(
       start: true,
       EXPERIMENTAL: {
         ipnsPubsub: true
-      },
-      libp2p: {
-        modules: {
-          transport: [WebRTCStar]
-        },
-        config: {
-          peerDiscovery: {
-            webRTCStar: { // <- note the lower-case w - see https://github.com/libp2p/js-libp2p/issues/576
-              enabled: true
-            }
-          },
-          transport: {
-            WebRTCStar: { // <- note the upper-case w- see https://github.com/libp2p/js-libp2p/issues/576
-              wrtc
-            }
-          }
-        }
       },
       config: {
         Bootstrap: [

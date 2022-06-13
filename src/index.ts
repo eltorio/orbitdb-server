@@ -4,7 +4,7 @@ import https from 'https'
 import { config } from './config/config.js'
 import * as pinningList from './pinningList/index.js'
 import { orbitInstance } from './pinningList/orbitInstance.js'
-import { ipfsInstance, ipfsAPI } from './ipfsInstance.js'
+import { ipfsInstance, jsIpfsAPI } from './ipfsInstance.js'
 import { Multiaddr } from '@multiformats/multiaddr'
 import type { PeersResult } from 'ipfs-core-types/swarm'
 import { CID } from 'multiformats/cid'
@@ -102,8 +102,10 @@ app.get('/start', (req, res) => {
   pinningList.startPinning()
 })
 
-ipfsAPI.then((ipfsCtl) => {
-  ipfsInstance.ipfs = ipfsCtl.api;
+// ipfsAPI.then((ipfsCtl) => {
+//   ipfsInstance.ipfs = ipfsCtl.api;
+jsIpfsAPI.then((ipfs) => {
+  ipfsInstance.ipfs = ipfs;
   if (ipfsInstance.ipfs !== null) {
     if (process.env.TLS_KEY !== undefined && process.env.TLS_CERT !== undefined && config.API_PORT_TLS !== undefined) {
       const TLS_KEY = process.env.TLS_KEY
