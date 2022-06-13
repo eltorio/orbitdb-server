@@ -22,18 +22,6 @@ const factory = Ctl.createFactory(
     }
 )
 
-// const ctl = (await factory.spawn({ type: 'js' }))
-// ctl.init().then(async (ctler) => {
-//    // await ctler.start()
-//     const ipfs = ctler.api
-//     all(ipfs.cat('QmY4rTcFFeFo8uwuaT5env6PxzbJmpE2PQDbEJxGBtDrnw')).then ((u8data)=>{
-//         const data = uint8ArrayConcat(u8data)
-//         const decoder = new TextDecoder()
-//         console.log(decoder.decode(data))
-//         ipfs.stop()
-//     })
-// })
-
 const api = (await factory.spawn({ type: 'js' })).api
 const ipfs=api
 const data = uint8ArrayConcat(await all(ipfs.cat('QmY4rTcFFeFo8uwuaT5env6PxzbJmpE2PQDbEJxGBtDrnw')))
