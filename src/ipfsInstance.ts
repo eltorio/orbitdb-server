@@ -13,7 +13,7 @@ export const ipfsInstance = {
   },
   ipfs: {} as IPFS.IPFS,
 }
-
+const WS_BASE_PORT = (Math.floor(Math.random() * 100)).toString().padStart(2,'0')
 export const jsIpfsAPI = IPFS.create({
   repo: './orbitdb/server',
   start: true,
@@ -23,8 +23,8 @@ export const jsIpfsAPI = IPFS.create({
   config: {
     Addresses: {
       Swarm: [
-        "/ip4/0.0.0.0/tcp/4002",
-        "/ip4/127.0.0.1/tcp/4003/ws",
+        `/ip4/0.0.0.0/tcp/4${WS_BASE_PORT}2`,
+        `/ip4/127.0.0.1/tcp/4${WS_BASE_PORT}3/ws`,
         "/dns4/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
         "/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star"
       ]
@@ -48,7 +48,6 @@ export const jsIpfsAPI = IPFS.create({
             "/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt",
             "/ip4/104.131.131.82/tcp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ",
             "/ip4/104.131.131.82/udp/4001/quic/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ",
-            "/ip4/51.38.33.64/tcp/4001/p2p/12D3KooWH5WkyAW7UfrtW51C2ecQtu475CvB633eYihsgdzaQUg9"
           ],
           interval: 2000
         }
