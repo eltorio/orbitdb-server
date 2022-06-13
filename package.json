@@ -21,12 +21,13 @@
     "typescript": "^4.7.3"
   },
   "dependencies": {
+    "@chainsafe/libp2p-gossipsub": "^1.1.2",
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "ipfs": "^0.63.2",
-    "libp2p-gossipsub":"^0.13.0",
+    "libp2p-gossipsub": "^0.13.0",
     "orbit-db": "github:eltorio/orbit-db",
-    "wrtc":"^0.4.7"
+    "wrtc": "^0.4.7"
   },
   "engines": {
     "node": "16.x"
