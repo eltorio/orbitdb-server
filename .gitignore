@@ -39,5 +39,5 @@ src/config/node-version.json
 src/config/places.json
 src/config/mapbox-conf.json
 src/config/cesium-conf.json
-src/config/config.ts
+tmp
 orbitdb

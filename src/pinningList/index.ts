@@ -6,7 +6,7 @@ import { orbitInstance } from './orbitInstance.js'
 interface IPinner {
   [index: string]: OrbitPinner;
 }
-const pinners = {} as IPinner;
+const pinners = {} as IPinner
 
 const getContents =
   async () => {
@@ -18,7 +18,7 @@ const getContents =
           return e.payload.value as string
         }
       )
-    return dbContent;
+    return dbContent
   }
 
 const getPinners = () => pinners
@@ -57,8 +57,7 @@ const createPinnerInstance =
       pinners[address] = pinner
 
       return pinners[address]
-    }
-    else {
+    } else {
       return {} as OrbitPinner
     }
   }
@@ -82,8 +81,6 @@ const remove =
       return
     }
 
-
-
     const db = await orbitInstance()
     const dbAddresses = await getContents()
 
@@ -100,7 +97,7 @@ const remove =
         .filter(addr => (addr !== address))
         .forEach(
           address => db.add(address)
-        )               
+        )
     }
 
     console.log(`${address} removed.`)
@@ -123,7 +120,7 @@ console.log('Pinning previously added orbitdbs: ')
 // getContents().then( (pinned) => {
 //   pinned.forEach((pin)=>{console.log(pin)})
 // })
-//startPinning()
+// startPinning()
 
 export {
   add,

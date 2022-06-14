@@ -6,8 +6,8 @@ import { WebRTCStar } from '@libp2p/webrtc-star'
 import { MulticastDNS } from '@libp2p/mdns'
 import { Bootstrap } from '@libp2p/bootstrap'
 import { config } from '../src/config/config.js'
+import OrbitDB from 'orbit-db'
 
-const FILE = 'QmY4rTcFFeFo8uwuaT5env6PxzbJmpE2PQDbEJxGBtDrnw' // '/ipfs/QmRaaUwTNfwgFZpeUy8qrZwrp2dY4kCKmmB5xEqvH3vtD1/readme'
 const webRtcStar = new WebRTCStar({ wrtc })
 
 IPFS.create({
@@ -49,10 +49,9 @@ IPFS.create({
     ]
   }
 }).then((ipfs) => {
-  all(ipfs.cat(FILE)).then((u8data) => {
-    console.log((new TextDecoder()).decode(uint8ArrayConcat(u8data)))
-    ipfs.stop().then(() => {
-      console.log('ended')
-    })
+  OrbitDB.createInstance(ipfs).then(async (orbitDB) => {
+    const db = await orbitDB.keyvalue('test-db')
+    console.log(db.address.toString())
+    db.put('test', 'ici')
   })
 })
