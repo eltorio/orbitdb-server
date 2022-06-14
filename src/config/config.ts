@@ -16,7 +16,9 @@ export const config = {
     `/ip4/0.0.0.0/tcp/4${rand100()}2`,
     `/ip4/0.0.0.0/tcp/4$${rand100()}3/ws`,
     `/ip6/::/tcp/4${rand100()}4`,
-    `/ip6/::/tcp/4${rand100()}5/ws`
+    `/ip6/::/tcp/4${rand100()}5/ws`,
+    // '/dns4/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star',
+    // '/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star'
     // '/dns6/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star',
     // '/dns6/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star'
   ],

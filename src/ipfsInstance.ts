@@ -17,6 +17,8 @@ export const ipfsInstance = {
 export const jsIpfsAPI = () => {
   return IPFS.create({
     repo: './orbitdb/server',
+    repoAutoMigrate: true,
+    onMigrationProgress: (version: number, progress: string, message: string) => { console.log(`repo migration: v:${version}, progress:${progress}, message:${message}`) },
     start: true,
     EXPERIMENTAL: {
       ipnsPubsub: true,

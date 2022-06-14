@@ -1,15 +1,15 @@
 import cors from 'cors'
 import express from 'express'
 import https from 'https'
+import type { PeersResult } from 'ipfs-core-types/swarm'
+import all from 'it-all'
+import { CID } from 'multiformats/cid'
+import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { config } from './config/config.js'
+import { ipfsInstance, jsIpfsAPI } from './ipfsInstance.js'
 import * as pinningList from './pinningList/index.js'
 import { orbitInstance } from './pinningList/orbitInstance.js'
-import { ipfsInstance, jsIpfsAPI } from './ipfsInstance.js'
 import { Multiaddr } from '@multiformats/multiaddr'
-import type { PeersResult } from 'ipfs-core-types/swarm'
-import { CID } from 'multiformats/cid'
-import all from 'it-all'
-import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 
 const app = express()
 app.use(cors())
@@ -63,6 +63,9 @@ app.get('/connect', (req, res) => {
   if ((address !== undefined) && (typeof address === 'string')) {
     const mAddr = new Multiaddr(address)
     ipfsInstance.ipfs.swarm.connect(mAddr).then(() => { res.send(`Connected to ${address}`) })
+      .catch((reason) => {
+        res.send(`Can't connect reason: ${reason}`)
+      })
   } else {
     res.send('missing \'address\' parameter')
   }
@@ -100,6 +103,14 @@ app.get('/peers', (req, res) => {
 app.get('/start', (req, res) => {
   res.send('start pinning')
   pinningList.startPinning()
+})
+
+app.get('/version', (req, res) => {
+  ipfsInstance.ipfs.version().then((v) => {
+    res.send(`IPFS version:${v.version} repo:${v.repo}`)
+  }).catch((reason) => {
+    console.log(`Fail to create jsipfs reason is: ${reason}`)
+  })
 })
 
 // ipfsAPI.then((ipfsCtl) => {

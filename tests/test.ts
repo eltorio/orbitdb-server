@@ -10,9 +10,8 @@ create({
   config: {}
 }).then((ipfs) => {
   OrbitDB.createInstance(ipfs,
-    {directory:'.'
-  })
+    { directory: '.' })
     .then((db) => {
-    console.log(db.id)
-  })
+      console.log(db.id)
+    })
 })
