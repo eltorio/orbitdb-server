@@ -16,7 +16,7 @@
   </a>
 
 <h3 align="center">OrbitDB Server</h3>
-<h3 align="center">W.I.P. : NOT WORKING (Yet !)</h3>
+<h3 align="center"><b>W.I.P. : </b>NOT WORKING (Yet !)<br/>Pinnining/replication work</h3>
   <p align="center">
     This is a proof of concept of a persistent OrbitDB Server.<br />
     The main idea is coming from <a href="https://github.com/orbitdb/orbit-db-pinner/blob/main/README.md">orbit-db-pinner</a>
@@ -104,8 +104,21 @@ Heroku will kill it after 30 min.
    ```js
    npm run dev;
    ```
-
+4. Populate
+   ```sh
+   curl http(s)://localhost:3000/pin?address=[SOME-orbitb-path]
+   curl http(s)://localhost:3000/start
+   curl http(s)://localhost:3000/peers
+   …
+   ```
+   
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+## Status
+
+Currently server is working, OrbitDB bases are replicated. But WebRTCStar is not working.   
+So yet the best solution is to provide to browser clients the swarm address of the server in the bootstrap list.   
+
 
 ## Contributing
 
