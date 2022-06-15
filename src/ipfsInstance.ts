@@ -4,6 +4,7 @@ import { WebRTCStar } from '@libp2p/webrtc-star'
 import { MulticastDNS } from '@libp2p/mdns'
 import { Bootstrap } from '@libp2p/bootstrap'
 import { config } from './config/config.js'
+import os from 'os'
 
 const webRtcStar = new WebRTCStar({ wrtc })
 const ON_HEROKU = process.env.ON_HEROKU !== undefined ? process.env.ON_HEROKU === '1' ? true : false : false
@@ -17,7 +18,7 @@ export const ipfsInstance = {
 
 export const jsIpfsAPI = () => {
   return IPFS.create({
-    repo: ON_HEROKU ? '/tmp/orbitdb/server' : './orbitdb/server',
+    repo: ON_HEROKU ? `${os.tmpdir()}/orbitdb/server` : './orbitdb/server',
     repoAutoMigrate: true,
     onMigrationProgress: (version: number, progress: string, message: string) => { console.log(`repo migration: v:${version}, progress:${progress}, message:${message}`) },
     start: true,
