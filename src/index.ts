@@ -10,6 +10,7 @@ import { ipfsInstance, jsIpfsAPI } from './ipfsInstance.js'
 import * as pinningList from './pinningList/index.js'
 import { orbitInstance } from './pinningList/orbitInstance.js'
 import { Multiaddr } from '@multiformats/multiaddr'
+import os from 'os'
 
 const app = express()
 app.use(cors())
@@ -116,7 +117,7 @@ app.get('/version', (req, res) => {
 // ipfsAPI.then((ipfsCtl) => {
 //   ipfsInstance.ipfs = ipfsCtl.api;
 const PORT = process.env.PORT !== undefined ? Number(process.env.PORT) : 3000
-
+console.log(`Starting on port: ${PORT} and tmpdir:${os.tmpdir()}`)
 jsIpfsAPI().then((ipfs) => {
   console.log('jsipfs created')
   ipfsInstance.ipfs = ipfs
