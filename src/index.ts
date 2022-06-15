@@ -125,9 +125,9 @@ jsIpfsAPI().then((ipfs) => {
       const TLS_CERT = process.env.TLS_CERT
       const credentials = { key: TLS_KEY, cert: TLS_CERT }
       const httpsServer = https.createServer(credentials, app)
-      httpsServer.listen(config.API_PORT_TLS, () => console.log(`Express is listenning on TLS port ${config.API_PORT_TLS}`))
+      httpsServer.listen(process.env.PORT || 3000, () => console.log(`Express is listenning on TLS port ${process.env.PORT || 3000}`))
     } else {
-      app.listen(config.API_PORT, () => console.log('Express is listenning'))
+      app.listen(process.env.PORT || 3000, () => console.log(`Express is listenning on uncrypted port ${process.env.PORT || 3000}`))
     }
   } else {
     console.log('Cannot start')
