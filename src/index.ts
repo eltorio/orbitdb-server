@@ -116,21 +116,18 @@ app.get('/version', (req, res) => {
 
 // ipfsAPI.then((ipfsCtl) => {
 //   ipfsInstance.ipfs = ipfsCtl.api;
-const PORT = process.env.PORT !== undefined ? Number(process.env.PORT) : 3000
-console.log(`Starting on port: ${PORT} and tmpdir:${os.tmpdir()}`)
+console.log(`Starting on Heroku:${config.ON_HEROKU} on port: ${config.API_PORT} and tmpdir:${os.tmpdir()} `)
 jsIpfsAPI().then((ipfs) => {
   console.log('jsipfs created')
   ipfsInstance.ipfs = ipfs
   if (ipfsInstance.ipfs !== null) {
     console.log('launching Express')
-    if (process.env.TLS_KEY !== undefined && process.env.TLS_CERT !== undefined && PORT !== undefined) {
-      const TLS_KEY = process.env.TLS_KEY
-      const TLS_CERT = process.env.TLS_CERT
-      const credentials = { key: TLS_KEY, cert: TLS_CERT }
+    if (process.env.TLS_KEY !== undefined && process.env.TLS_CERT !== undefined && config.API_PORT !== undefined) {
+      const credentials = config.CREDENTIALS
       const httpsServer = https.createServer(credentials, app)
-      httpsServer.listen(PORT, () => console.log(`Express is listenning on TLS port ${PORT}`))
+      httpsServer.listen(config.API_PORT, () => console.log(`Express is listenning on TLS port ${config.API_PORT}`))
     } else {
-      app.listen(PORT, () => console.log(`Express is listenning on uncrypted port ${PORT}`))
+      app.listen(config.API_PORT, () => console.log(`Express is listenning on uncrypted port ${config.API_PORT}`))
     }
   } else {
     console.log('Cannot start')
