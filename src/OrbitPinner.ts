@@ -57,13 +57,13 @@ class Pinner {
       console.log(`opening database from ${address}`)
       const db = await orbitdb.open(address, {
         replicate: true,
-        create: true,
+        create: false,
         localOnly: false
       })
 
       console.log('Listening for updates to the database...')
-      db.events.on('load.progress', (address, hash, entry, progress, total) => { console.log(`Load progress ${address}:${progress}`) })
-      db.events.on('replicate.progress', (address, hash, entry, progress, have) => { console.log(`Replicate progress ${address}:${progress}`) })
+      // db.events.on('load.progress', (address, hash, entry, progress, total) => { console.log(`Load progress ${address}:${progress}`) })
+      // db.events.on('replicate.progress', (address, hash, entry, progress, have) => { console.log(`Replicate progress ${address}:${progress}`) })
       db.events.on('replicated', () => {
         console.log('replication event fired')
       })
