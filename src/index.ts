@@ -87,8 +87,8 @@ app.get('/connect', jwsHasPermissions(Permission.API_START), (req:Request, res:R
   if ((address !== undefined) && (typeof address === 'string')) {
     const mAddr = new Multiaddr(address)
     ipfsInstance.ipfs.swarm.connect(mAddr).then(() => { res.send(`Connected to ${escape(address)}`) })
-      .catch((reason) => {
-        res.send(`Can't connect reason: ${reason}`)
+      .catch((reason:Error) => {
+        res.send(`Can't connect reason: ${escape(reason.message)}`)
       })
   } else {
     res.status(501).send('missing \'address\' parameter')
