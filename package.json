@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "nodemon --watch src -e js,ts,json --exec \"ts-node --esm src/index.ts\"",
-    "build": "tsup-node --format esm src/index.ts --clean",
+    "build": "tsup-node --target esnext --format esm src/index.ts --clean",
     "start": "node dist/index.js",
     "test": "ts-node test.ts"
   },
