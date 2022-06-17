@@ -7,6 +7,9 @@ import * as jose from 'jose'
 
 const algorithm = 'RS256'
 
+/**
+ * Permission requested
+ */
 export enum Permission {
   // eslint-disable-next-line no-unused-vars
   READ_PEERS = 'read:peers',

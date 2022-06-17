@@ -1,49 +1,29 @@
+import { Multiaddr } from '@multiformats/multiaddr'
 import cors from 'cors'
+import type { Express, Request, Response } from 'express'
 import express from 'express'
+import { auth } from 'express-openid-connect'
 import https from 'https'
 import type { PeersResult } from 'ipfs-core-types/swarm'
 import all from 'it-all'
 import { CID } from 'multiformats/cid'
+import os from 'os'
 import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
+import { configAuth0, jwsHasPermissions, Permission } from './auth0helper.js'
 import { config } from './config/config.js'
 import { ipfsInstance, jsIpfsAPI } from './ipfsInstance.js'
 import * as pinningList from './pinningList/index.js'
 import { orbitInstance } from './pinningList/orbitInstance.js'
-import { Multiaddr } from '@multiformats/multiaddr'
-import os from 'os'
-import { configAuth0, jwsHasPermissions, Permission } from './auth0helper.js'
-import { auth } from 'express-openid-connect'
-import type { Express, Request, Response } from 'express'
+import rateLimit from 'express-rate-limit'
+import escape from 'escape-html'
+
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5
+})
 
 const app:Express = express()
-app.use(cors())
-
-// app.use(jwtCheck.unless({
-//   path: [
-//     '/login',
-//     '/logout',
-//     '/callback',
-//     '/auth0',
-//     '/version'
-//   ]
-// }))
-//   .use(auth(configAuth0))
-//   .use((err, req, res, next) => {
-//     if (err.status === 401) {
-//       res.redirect('/version')
-//     }
-//   })
-
-// app.use(jwsHasPermissions(Permission.READ_PEERS).unless({
-//   path: [
-//     '/login',
-//     '/logout',
-//     '/callback',
-//     '/auth0',
-//     '/version',
-//     '/'
-//   ]
-// }))
+app.use(cors()).use(limiter)
 
 app.use(auth(configAuth0))
 
@@ -83,9 +63,9 @@ app.get('/pin', jwsHasPermissions(Permission.DB_PIN), (req:Request, res:Response
   if ((address !== undefined) && (typeof address === 'string')) {
     pinningList.add(address)
 
-    res.send(`adding... ${address}`)
+    res.send(`adding... ${escape(address)}`)
   } else {
-    res.send('missing \'address\' query parameter')
+    res.status(501).send('missing \'address\' query parameter')
   }
 })
 
@@ -95,9 +75,9 @@ app.get('/unpin', jwsHasPermissions(Permission.DB_UNPIN), (req:Request, res:Resp
   if ((address !== undefined) && (typeof address === 'string')) {
     pinningList.remove(address)
 
-    res.send(`removing... ${address}`)
+    res.send(`removing... ${escape(address)}`)
   } else {
-    res.send('missing \'address\' query parameter')
+    res.status(501).send('missing \'address\' query parameter')
   }
 })
 
@@ -106,12 +86,12 @@ app.get('/connect', jwsHasPermissions(Permission.API_START), (req:Request, res:R
 
   if ((address !== undefined) && (typeof address === 'string')) {
     const mAddr = new Multiaddr(address)
-    ipfsInstance.ipfs.swarm.connect(mAddr).then(() => { res.send(`Connected to ${address}`) })
+    ipfsInstance.ipfs.swarm.connect(mAddr).then(() => { res.send(`Connected to ${escape(address)}`) })
       .catch((reason) => {
         res.send(`Can't connect reason: ${reason}`)
       })
   } else {
-    res.send('missing \'address\' parameter')
+    res.status(501).send('missing \'address\' parameter')
   }
 })
 
@@ -133,7 +113,7 @@ app.get('/get', jwsHasPermissions(Permission.GET_OBJECT), (req:Request, res:Resp
       res.send(new TextDecoder().decode(uint8ArrayConcat(u8data)))
     })
   } else {
-    res.send('not a CID')
+    res.status(501).send('not a CID')
   }
 })
 
