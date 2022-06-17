@@ -4,16 +4,13 @@
     // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "Debug",
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "node",
             "runtimeArgs": ["--loader","ts-node/esm"],
-      
-            "args": ["src/index.ts",],
-            
+            "args": ["src/index.ts",],           
             "cwd": "${workspaceRoot}",
             "internalConsoleOptions": "openOnSessionStart",
             "skipFiles": ["<node_internals>/**", "node_modules/**"]

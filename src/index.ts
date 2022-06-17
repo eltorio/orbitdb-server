@@ -11,11 +11,54 @@ import * as pinningList from './pinningList/index.js'
 import { orbitInstance } from './pinningList/orbitInstance.js'
 import { Multiaddr } from '@multiformats/multiaddr'
 import os from 'os'
+import { configAuth0, jwsHasPermissions, Permission } from './auth0helper.js'
+import { auth } from 'express-openid-connect'
+import type { Express, Request, Response } from 'express'
 
-const app = express()
+const app:Express = express()
 app.use(cors())
 
-app.get('/stats', async (req, res) => {
+// app.use(jwtCheck.unless({
+//   path: [
+//     '/login',
+//     '/logout',
+//     '/callback',
+//     '/auth0',
+//     '/version'
+//   ]
+// }))
+//   .use(auth(configAuth0))
+//   .use((err, req, res, next) => {
+//     if (err.status === 401) {
+//       res.redirect('/version')
+//     }
+//   })
+
+// app.use(jwsHasPermissions(Permission.READ_PEERS).unless({
+//   path: [
+//     '/login',
+//     '/logout',
+//     '/callback',
+//     '/auth0',
+//     '/version',
+//     '/'
+//   ]
+// }))
+
+app.use(auth(configAuth0))
+
+const routeAuth0Handler = (req:Request, res:Response) => {
+  res.send('Logout')
+}
+app.get('/auth0', routeAuth0Handler)
+app.post('/auth0', routeAuth0Handler)
+
+app.get('/', async (req:Request, res:Response) => {
+  const accessToken = req.oidc.accessToken
+  res.send(`${accessToken?.token_type} ${accessToken?.access_token}`)
+})
+
+app.get('/stats', async (req:Request, res:Response) => {
   const databases = await pinningList.getContents()
   const pinners = await pinningList.getPinners()
   const db = await orbitInstance()
@@ -34,7 +77,7 @@ app.get('/stats', async (req, res) => {
   })
 })
 
-app.get('/pin', (req, res) => {
+app.get('/pin', jwsHasPermissions(Permission.DB_PIN), (req:Request, res:Response) => {
   const address = req.query.address
 
   if ((address !== undefined) && (typeof address === 'string')) {
@@ -46,7 +89,7 @@ app.get('/pin', (req, res) => {
   }
 })
 
-app.get('/unpin', (req, res) => {
+app.get('/unpin', jwsHasPermissions(Permission.DB_UNPIN), (req:Request, res:Response) => {
   const address = req.query.address
 
   if ((address !== undefined) && (typeof address === 'string')) {
@@ -58,7 +101,7 @@ app.get('/unpin', (req, res) => {
   }
 })
 
-app.get('/connect', (req, res) => {
+app.get('/connect', jwsHasPermissions(Permission.API_START), (req:Request, res:Response) => {
   const address = req.query.address
 
   if ((address !== undefined) && (typeof address === 'string')) {
@@ -72,7 +115,7 @@ app.get('/connect', (req, res) => {
   }
 })
 
-app.get('/findprovs', (req, res) => {
+app.get('/findprovs', jwsHasPermissions(Permission.READ_PEERS), (req:Request, res:Response) => {
   const object = req.query.object
   const cid = CID.parse(object as string)
   if (CID.asCID(cid) !== null) {
@@ -82,7 +125,7 @@ app.get('/findprovs', (req, res) => {
   }
 })
 
-app.get('/get', (req, res) => {
+app.get('/get', jwsHasPermissions(Permission.GET_OBJECT), (req:Request, res:Response) => {
   const object = req.query.object
   const cid = CID.parse(object as string)
   if (CID.asCID(cid) !== null) {
@@ -94,19 +137,19 @@ app.get('/get', (req, res) => {
   }
 })
 
-app.get('/peers', (req, res) => {
+app.get('/peers', jwsHasPermissions(Permission.READ_PEERS), (req:Request, res:Response) => {
   ipfsInstance.ipfs.swarm.peers().then((peers: PeersResult[]) => {
     res.header('Content-Type', 'application/json')
     res.send(`Connected to ${JSON.stringify(peers, null, 4)}`)
   })
 })
 
-app.get('/start', (req, res) => {
+app.get('/start', jwsHasPermissions(Permission.API_START), (req:Request, res:Response) => {
   res.send('start pinning')
   pinningList.startPinning()
 })
 
-app.get('/version', (req, res) => {
+app.get('/version', (req:Request, res:Response) => {
   ipfsInstance.ipfs.version().then((v) => {
     res.send(`IPFS version:${v.version} repo:${v.repo}`)
   }).catch((reason) => {

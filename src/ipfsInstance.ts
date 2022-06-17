@@ -20,10 +20,10 @@ export const jsIpfsAPI = () => {
   return IPFS.create({
     repo: config.ON_HEROKU ? `${os.tmpdir()}/orbitdb/server` : './orbitdb/server',
     repoAutoMigrate: true,
-    relay:{
+    relay: {
       enabled: true,
-      hop:{
-        enabled:true,
+      hop: {
+        enabled: true
       }
     },
     onMigrationProgress: (version: number, progress: string, message: string) => { console.log(`repo migration: v:${version}, progress:${progress}, message:${message}`) },
