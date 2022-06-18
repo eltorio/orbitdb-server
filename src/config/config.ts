@@ -1,6 +1,6 @@
 const privatePeers = process.env.PRIVATE_PEERS !== undefined ? process.env.PRIVATE_PEERS.split(';') as string[] : []
-const rand100 = () => {
-  let zero = '00'
+const rand100 = ():string => {
+  let zero:string
   try {
     zero = (Math.floor(Math.random() * 100)).toString().padStart(2, '0')
   } finally {
